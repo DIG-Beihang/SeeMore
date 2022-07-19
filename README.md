@@ -13,9 +13,15 @@ A pytorch implementation of the paper "SeeMore: bidirectional spatio-temporal pr
 3. Train and test the model. You can use the following bash script to train and test the model. The learned model will be saved in the `--save_dir` folder.
 
 ```
+# Moving Mnist dataset
 sh mnist_script/train_stage_1.sh
 sh mnist_script/train_stage_2.sh
 sh mnist_script/test.sh
+
+# KTH action dataset
+sh kth_script/train_stage_1.sh
+sh kth_script/train_stage_2.sh
+sh kth_script/test.sh
 ```
 
 <!-- 4. You can get **pretrained models** from  -->
