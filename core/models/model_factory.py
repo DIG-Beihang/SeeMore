@@ -48,11 +48,11 @@ class Model(object):
             self.optimizer.step()
             return loss.detach().cpu().numpy()
         elif self.configs.training_stage == 2:
-            meta_loss = self.maml(frames_tensor, mask_tensor, update_lr=self.update_lr_flag)
+            meta_loss = self.maml(frames_tensor, mask_tensor, update_lr_flag=self.update_lr_flag)
             return meta_loss.detach().cpu().numpy()
 
     def test(self, frames, mask):
         frames_tensor = torch.FloatTensor(frames).to(self.configs.device)
         mask_tensor = torch.FloatTensor(mask).to(self.configs.device)
-        next_frames, _, _ = self.network.rnn(frames_tensor, mask_tensor)
+        next_frames, _, _ = self.network.rnn(frames_tensor, mask_tensor, test_flag=True)
         return next_frames.detach().cpu().numpy()

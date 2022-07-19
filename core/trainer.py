@@ -29,7 +29,7 @@ def train(model, ims, real_input_flag, configs, itr):
 
 def test(model, test_input_handle, configs, itr):
     print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'test...')
-    total_length = configs.total_length
+    total_length = configs.total_length_test
     test_input_handle.begin(do_shuffle=False)
     avg_mse = 0
     batch_id = 0

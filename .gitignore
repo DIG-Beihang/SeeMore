@@ -1,5 +1,5 @@
-*.png
+checkpoints/
+.ipynb_checkpoints/
+__pycache__/
 *.log
 *.ckpt*
-*.pyc
-

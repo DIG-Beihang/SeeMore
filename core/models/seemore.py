@@ -32,7 +32,7 @@ class RNN(nn.Module):
         adapter_num_hidden = num_hidden[0]
         self.adapter = nn.Conv2d(adapter_num_hidden, adapter_num_hidden, 1, stride=1, padding=0, bias=False)
 
-    def forward(self, frames_tensor, mask_true, params=None, prefix='rnn.'):
+    def forward(self, frames_tensor, mask_true, params=None, prefix='rnn.', test_flag=False):
         # [batch, length, height, width, channel] -> [batch, length, channel, height, width]
         frames = frames_tensor.permute(0, 1, 4, 2, 3).contiguous()
         mask_true = mask_true.permute(0, 1, 4, 2, 3).contiguous()
@@ -58,7 +58,11 @@ class RNN(nn.Module):
 
         memory = torch.zeros([batch, self.num_hidden[0], height, width]).to(self.configs.device)
 
-        for t in range(self.configs.total_length - 1):
+        total_length = self.configs.total_length
+        if test_flag:
+            total_length = self.configs.total_length_test
+
+        for t in range(total_length - 1):
             if self.configs.reverse_scheduled_sampling == 1:
                 # reverse schedule sampling
                 if t == 0:

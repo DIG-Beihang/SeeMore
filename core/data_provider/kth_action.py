@@ -9,7 +9,7 @@ import random
 logger = logging.getLogger(__name__)
 
 class InputHandle:
-    def __init__(self, datas, indices, input_param, mode='train'):
+    def __init__(self, datas, indices, input_param):
         self.name = input_param['name']
         self.input_data_type = input_param.get('input_data_type', 'float32')
         self.minibatch_size = input_param['minibatch_size']
@@ -18,12 +18,7 @@ class InputHandle:
         self.indices = indices
         self.current_position = 0
         self.current_batch_indices = []
-        if mode == 'train':
-            self.current_input_length = input_param['seq_length']
-        else:
-            self.current_input_length = 30
-        
-        print(self.current_input_length)
+        self.current_input_length = input_param['seq_length']
 
     def total(self):
         return len(self.indices)
@@ -60,8 +55,6 @@ class InputHandle:
             begin = batch_ind
             end = begin + self.current_input_length
             data_slice = self.datas[begin:end, :, :, :]
-            # print('data_slice', data_slice.shape, begin, end, self.current_input_length)
-            # print('input_batch', input_batch.shape)
             input_batch[i, :self.current_input_length, :, :, :] = data_slice
             
         input_batch = input_batch.astype(self.input_data_type)
@@ -147,22 +140,16 @@ class DataProcess:
                     frames_category.append(frame_category_flag)
         # is it a begin index of sequence
         indices = []
-        
         index = len(frames_person_mark) - 1
-        if mode=='train':
-            seq_len = self.seq_len
-        else:
-            seq_len = 30
-
-        while index >= seq_len - 1:
-            if frames_person_mark[index] == frames_person_mark[index - seq_len + 1]:
+        while index >= self.seq_len - 1:
+            if frames_person_mark[index] == frames_person_mark[index - self.seq_len + 1]:
                 end = int(frames_file_name[index][6:10])
-                start = int(frames_file_name[index - seq_len + 1][6:10])
+                start = int(frames_file_name[index - self.seq_len + 1][6:10])
                 # TODO: mode == 'test'
-                if end - start == seq_len - 1:
-                    indices.append(index - seq_len + 1)
+                if end - start == self.seq_len - 1:
+                    indices.append(index - self.seq_len + 1)
                     if frames_category[index] == 1:
-                        index -= seq_len - 1
+                        index -= self.seq_len - 1
                     elif frames_category[index] == 2:
                         index -= 2
                     else:
@@ -180,9 +167,8 @@ class DataProcess:
 
     def get_train_input_handle(self):
         train_data, train_indices = self.load_data(self.paths, mode='train')
-        return InputHandle(train_data, train_indices, self.input_param, mode='train')
+        return InputHandle(train_data, train_indices, self.input_param)
 
     def get_test_input_handle(self):
         test_data, test_indices = self.load_data(self.paths, mode='test')
-        return InputHandle(test_data, test_indices, self.input_param, mode='test')
-
+        return InputHandle(test_data, test_indices, self.input_param)
