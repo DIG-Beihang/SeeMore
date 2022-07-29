@@ -2,6 +2,7 @@
 
 python -u run.py \
     --is_training 1 \
+    --training_stage 1 \
     --device cuda \
     --dataset_name action \
     --train_data_paths data/kth_action \
